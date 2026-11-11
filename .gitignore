@@ -1,0 +1,39 @@
+# Secrets & local env
+.env
+.env.local
+.env.*.local
+*.pem
+
+# Cloudflare / Wrangler
+.wrangler/
+.dev.vars
+wrangler.toml.bak
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-error.log*
+package-lock.json
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.idea/
+.vscode/
+*.log
+
+# Build / release
+dist/
+*.zip
+!releases/*.zip
+
+# Python
+__pycache__/
+*.pyc
+.Python
+
+# Local D1
+.local.db
+*.sqlite

@@ -1,0 +1,27 @@
+{
+  "name": "aethexflow-enterprise",
+  "version": "0.1.5",
+  "description": "AethexFlow Enterprise — First Launch. Cloudflare Worker + static hub + Grok/Aethi proxy + 6-digit codes.",
+  "private": true,
+  "scripts": {
+    "deploy": "bash scripts/deploy.sh",
+    "qa": "bash scripts/qa.sh",
+    "dev": "wrangler dev",
+    "d1:create": "wrangler d1 create aethexflow-db",
+    "d1:migrate": "wrangler d1 migrations apply aethexflow-production",
+    "d1:migrate:local": "wrangler d1 migrations apply aethexflow-production --local",
+    "secret:grok": "wrangler secret put GROK_API_KEY"
+  },
+  "keywords": [
+    "aethexflow",
+    "cloudflare-workers",
+    "grok",
+    "xai",
+    "d1"
+  ],
+  "author": "AethexFlow",
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=18"
+  }
+}
