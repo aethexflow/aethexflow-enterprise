@@ -1,0 +1,18 @@
+name = "aethexflow-enterprise"
+compatibility_date = "2026-11-10"
+main = "workers/index.js"
+
+[assets]
+directory = "./public"
+binding = "ASSETS"
+not_found_handling = "single-page-application"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "aethexflow-production"
+database_id = "PASTE_YOUR_EXISTING_D1_ID_HERE"
+
+[vars]
+GROK_MODEL = "grok-4"
+APP_NAME = "AethexFlow Enterprise"
+DOMAIN = "aethexflow.online"
