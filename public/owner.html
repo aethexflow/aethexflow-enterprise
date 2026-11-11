@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>Owner · AethexFlow</title>
+<link rel="icon" href="assets/mark.png"/>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css"/>
+<style>
+  .panel{max-width:720px;margin:40px auto;padding:0 20px}
+  .row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+  input,button{font-family:inherit}
+  input{background:var(--bg-elev);border:1px solid var(--border);color:var(--text);
+    padding:10px 14px;border-radius:8px;font-size:1rem;min-width:140px}
+  .code-box{font-size:2rem;font-weight:700;letter-spacing:.15em;color:var(--red);
+    background:var(--bg-card);border:1px solid var(--border);padding:16px 24px;
+    border-radius:12px;text-align:center;margin:12px 0}
+  table{width:100%;border-collapse:collapse;font-size:.9rem}
+  th,td{padding:10px 8px;border-bottom:1px solid var(--border);text-align:left}
+  th{color:var(--text-dim);font-weight:600}
+  .status{font-size:.85rem;color:var(--text-dim);margin-top:8px}
+</style>
+</head>
+<body>
+<header class="nav">
+  <div class="wrap navrow">
+    <a class="brand" href="index.html"><img src="assets/mark.png" alt=""/>Aethex<b>Flow</b></a>
+    <nav class="links">
+      <a href="chat/index.html">Chat</a>
+      <a href="bots.html">Bots</a>
+      <a href="owner.html" class="active">Owner</a>
+    </nav>
+  </div>
+</header>
+
+<div class="panel">
+  <h1>Owner Panel</h1>
+  <p class="sub">Generate 6-digit access codes · view recent users · test Grok / Aethi</p>
+
+  <div class="row">
+    <button class="btn btn-primary" id="btnGen">Generate Code</button>
+    <button class="btn btn-ghost" id="btnRefresh">Refresh List</button>
+  </div>
+
+  <div id="codeOut" class="code-box" style="display:none"></div>
+  <div class="status" id="status"></div>
+
+  <h3 style="margin-top:32px">Recent Codes</h3>
+  <table>
+    <thead><tr><th>Code</th><th>Role</th><th>Created</th></tr></thead>
+    <tbody id="userList"><tr><td colspan="3">Loading…</td></tr></tbody>
+  </table>
+
+  <h3 style="margin-top:36px">Quick Aethi Test</h3>
+  <div class="row">
+    <input id="aethiInput" placeholder="Type anything…" style="flex:1"/>
+    <button class="btn btn-primary" id="btnAethi">Parse Intent</button>
+  </div>
+  <pre id="aethiOut" style="background:var(--bg-card);border:1px solid var(--border);padding:14px;border-radius:10px;font-size:.85rem;overflow:auto;max-height:240px;display:none"></pre>
+</div>
+
+<script>
+const API = location.origin; // same origin when deployed
+
+async function genCode() {
+  status("Generating…");
+  const r = await fetch(API + "/api/auth/code", {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({action:"generate", role:"user"})
+  });
+  const d = await r.json();
+  if (d.code) {
+    document.getElementById("codeOut").style.display = "block";
+    document.getElementById("codeOut").textContent = d.code;
+    status(d.note || "Code ready — share once");
+    refresh();
+  } else {
+    status("Error: " + (d.error || r.status));
+  }
+}
+
+async function refresh() {
+  const r = await fetch(API + "/api/owner");
+  const d = await r.json();
+  const tbody = document.getElementById("userList");
+  if (!d.users || !d.users.length) {
+    tbody.innerHTML = `<tr><td colspan="3">${d.message || "No users yet"}</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = d.users.map(u => `
+    <tr>
+      <td><b>${u.code}</b></td>
+      <td>${u.role || "user"}</td>
+      <td>${u.created_at ? new Date(u.created_at).toLocaleString() : "—"}</td>
+    </tr>`).join("");
+}
+
+async function testAethi() {
+  const text = document.getElementById("aethiInput").value.trim();
+  if (!text) return;
+  status("Aethi thinking…");
+  const r = await fetch(API + "/api/aethi", {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({text})
+  });
+  const d = await r.json();
+  const out = document.getElementById("aethiOut");
+  out.style.display = "block";
+  out.textContent = JSON.stringify(d.aethi || d, null, 2);
+  status(r.ok ? "Done" : "Error");
+}
+
+document.getElementById("btnGen").onclick = genCode;
+document.getElementById("btnRefresh").onclick = refresh;
+document.getElementById("btnAethi").onclick = testAethi;
+refresh();
+</script>
+</body>
+</html>
