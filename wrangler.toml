@@ -10,7 +10,7 @@ not_found_handling = "single-page-application"
 [[d1_databases]]
 binding = "DB"
 database_name = "aethexflow-production"
-database_id = "PASTE_YOUR_EXISTING_D1_ID_HERE"
+database_id = "628936fd-1a1e-41fd-b085-441c74c9e586"
 
 [vars]
 GROK_MODEL = "grok-4"
